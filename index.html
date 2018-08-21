@@ -1,0 +1,68 @@
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Vue JS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/css/materialize.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue-resource@1.5.1"></script>
+</head>
+<body class="container">
+  <div id='vueapp'>
+    <div>
+        <p>
+            Nombre: <input v-model="nombre" />
+        </p>
+        <p>
+            Tel&eacute;fono: <input v-model="telefono" />
+        </p>
+        <p>
+            <button v-on:click="enviar">Enviar</button>
+        </p>
+    </div>
+    <h2>Listado de registros</h2>
+    <div>
+        <div v-for="r in regs">
+            <div>{{ r.nombre }}, {{ r.telefono }}</div>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+
+  var app = new Vue({
+  el: '#vueapp',
+  data: {
+    nombre: '',
+    telefono: '',
+    regs: []
+    },
+  methods: {
+
+    reloadList: function() {
+        this.$http.get('data.php').then(function(response){
+                // console.log(response);
+                this.regs = response.body;
+            }, function(){
+                alert('Error!');
+            });
+        },
+
+    enviar: function() {
+        this.$http.post('data.php',{
+            nombre: this.nombre,
+            telefono: this.telefono
+            }).then(function(response){
+                this.regs = response.body;
+                this.nombre="";
+                this.telefono="";
+            });
+        }
+
+    },
+  created: function() {
+    this.reloadList();
+    }
+});
+</script>
+</html>
